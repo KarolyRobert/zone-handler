@@ -1,0 +1,23 @@
+{
+  "name": "@zargu/zone-handler",
+  "version": "1.0.0",
+  "description": "Interface for adding / updating / deleting dns records in a dns zone.",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KarolyRobert/zone-handler.git"
+  },
+  "keywords": [
+    "Bind9",
+    "nsupdate"
+  ],
+  "author": "RoGeR",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/KarolyRobert/zone-handler/issues"
+  },
+  "homepage": "https://github.com/KarolyRobert/zone-handler#readme"
+}

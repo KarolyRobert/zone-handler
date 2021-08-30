@@ -13,13 +13,13 @@ const digResponse = '; <<>> DiG 9.11.5-P4-5.1+deb10u5-Raspbian <<>> @ns0.hobbyfo
 'hobbyfork.com.		604800	IN	RRSIG	A 13 2 604800 20210823025040 20210809170317 22370 hobbyfork.com. rrMcsVrp2rIzmrz7EgTNa2vsJyZjdDLPOaMjbufQIt6V+A 7GSEtB0SuW92GZGg==\n'+
 'hobbyfork.com.		604800	IN	MX	10 mail.hobbyfork.com.\n'+
 'hobbyfork.com.		86400	IN	TXT	"v=spf1 mx ~all"\n'+
-'hobbyfork.com.		604800	IN	DNSKEY	257 3 13 xDMv4a6Cfgk0al1GfePl+fslmVfsFQdRegZSAvyj4js6Y8URqpjPfMCk 1Qy2UNW/5PLwN3pJORaXxpUpN4uCBQ==\n'+
+'hobbyfork.com.		604800	IN	DNSKEY	257 3 13 xDMv4a6Cfgk0al1GfePls+fslmVfsFQdRegZSAvyj4js6Y8URqpjPfMCk 1Qy2UNW/5PLwN3pJORaXxpUpN4uCBQ==\n'+
 'hobbyfork.com.		0	IN	NSEC3PARAM 1 0 10 30359FDCFA1D73EF\n'+
 'hobbyfork.com.		3600	IN	CDS	22370 13 2 C74396E179A86BC6E3ACA45E283A168DA5E7707083632F88B6AE2548 3C47E30C\n'+
 'hobbyfork.com.		3600	IN	CDNSKEY	257 3 13 xDMv4a6Cfgk0al1GfePl+fslmVfsFQdRegZ6Y8URqpjPfMCk 1Qy2UNW/5PLwN3pxpUpN4uCBQ==\n'+
 'hobbyfork.com.		0	IN	TYPE65534 \# 5 0D57620001\n'+
 '_dmarc.hobbyfork.com.	86400	IN	TXT	"v=DMARC1; p=reject; pct=100; fo=1; rua=mailto:postmaster@hobbyfork.com"\n'+
-'default._domainkey.hobbyfork.com. 86400	IN TXT	"v=DKIM1; h=sha256; k=rsa; " "p=MIIBIjANBgdkLqmTMaE89iRTpZd8pyHvsBWC9UTKPMyGYg//ZeW7KEHhQuQkSvKO3HsFN2pzeQI+UGszHviykKXz3SxReHSscolEEmxnckc8mtK78DO3KFbg6lp" "aqUNjhhOnVEvsYpwC6FIw09ZpfWghemQ9JDPI+xVpapuVvzvUbwIDAQAB"\n'+
+'default._domainkey.hobbyfork.com. 86400	IN TXT	"v=DKIM1; h=sha256; k=rsa; " "p=MIIBIjggdANBgdkLqmTMaE89iRTpZd8pyHvsBWC9UTKPMyGYg//ZeW7KEHhQuQkSvKO3HsFN2pzeQI+UGszHviykKXz3SxReHSscolEEmxnckc8mtK78DO3KFbg6lp" "aqUNjhhOnVEvsYpwC6FIw09ZpfWghemQ9JDPI+xVpapuVvzvUbwIDAQAB"\n'+
 'mail.hobbyfork.com.	604800	IN	A	92.118.27.14\n'+
 'ns0.hobbyfork.com.	604800	IN	A	45.148.28.74\n'+
 'ns1.hobbyfork.com.	604800	IN	A	92.118.27.14\n'+
@@ -36,7 +36,7 @@ const digResponse = '; <<>> DiG 9.11.5-P4-5.1+deb10u5-Raspbian <<>> @ns0.hobbyfo
 describe('dns_zone', () => {
 
     test('dns_zone promise an object with getRecords, and command properties.',done => {
-       // expect.assertions(1);
+        expect.assertions(2);
         dns_zone({
             zone:'hobbyfork.com',
             server:'ns0.hobbyfork.com',
@@ -51,10 +51,25 @@ describe('dns_zone', () => {
                 secret:'a765hs6h7sdh75g765'
             }
         }).then(result => {
+            let hases = result.getRecords().map(record => record.hash);
             expect(result.getRecords().length).toBe(12);
+            expect(hases).toEqual([
+                "9aa25f49e7c4e9d05f30862818f57717",
+                "6f3a8a9d844888acc7cd3bb3e88c5767",
+                "8b946252701c4b2d3fc3d1b9cc1a7d8b",
+                "e0832e4c3c82cd6b9a4a01f7a509e62a",
+                "75e21d6ec44bf09aba586b0faafa7601",
+                "fcad8a0f3a6a84f80b1653de77ea2e0b",
+                "7bff7fabba00a16fa3cb500592c11095",
+                "b81fe34e0b805d0b13f449173b03b746",
+                "81a4c948c1b2e6dbfe0d0e72012a15ca",
+                "1357d488cbc526fe2f351b94b4c8b382",
+                "a453d4c826191769b371e3f18efb172f",
+                "2a35bcda975bb00eaf1a26278314d905",
+            ]);
             done();
         },err => {
-            expect(err).toBe('mi a hiba');
+            expect(err).toBe('error');
             done();
         });
         child_process._current.stdout.push(digResponse);

@@ -15,6 +15,9 @@
     "Bind9",
     "nsupdate"
   ],
+  "jest": {
+    "verbose": true
+  },
   "author": "RoGeR",
   "license": "ISC",
   "bugs": {

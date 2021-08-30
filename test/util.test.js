@@ -1,7 +1,9 @@
 import child_process from 'child_process';
-import dns_zone from '../src/dns_zone';
+import { transferZone } from '../src/util/utils';
+
 
 jest.mock('child_process');
+
 
 const digResponse = '; <<>> DiG 9.11.5-P4-5.1+deb10u5-Raspbian <<>> @ns0.hobbyfork.com hobbyfork.com axfr -k tsig.key\n'+
 '; (1 server found)\n'+
@@ -33,35 +35,30 @@ const digResponse = '; <<>> DiG 9.11.5-P4-5.1+deb10u5-Raspbian <<>> @ns0.hobbyfo
 ';; XFR size: 66 records (messages 1, bytes 5844)\n';
 
 
-describe('dns_zone', () => {
-
-    test('dns_zone promise an object with getRecords, and command properties.',done => {
-       // expect.assertions(1);
-        dns_zone({
-            zone:'hobbyfork.com',
-            server:'ns0.hobbyfork.com',
-            updateKey:{
-                name:'update.key',
-                algorithm:'hmac-sha256',
-                secret:'asdfksf8s6s875g765'
-            },
-            transferKey:{
-                name:'tsig',
-                algorithm:'hmac-sha256',
-                secret:'a765hs6h7sdh75g765'
-            }
-        }).then(result => {
-            expect(result.getRecords().length).toBe(12);
-            done();
-        },err => {
-            expect(err).toBe('mi a hiba');
-            done();
+describe('util',() => {
+    describe('transferZone',() => {
+        test('transferZone', done => {
+            let add = jest.fn();
+            transferZone({
+                zone:'hobbyfork.com',
+                server:'ns0.hobbyfork.com',
+                updateKey:{
+                    name:'update.key',
+                    algorithm:'hmac-sha256',
+                    secret:'asdfksf8s6s875g765'
+                },
+                transferKey:{
+                    name:'tsig',
+                    algorithm:'hmac-sha256',
+                    secret:'a765hs6h7sdh75g765'
+                }
+            },add).then(() => {
+                expect(add.mock.calls.length).toBe(13);
+                done();
+            });
+            child_process._current.stdout.push(digResponse);
+            process.nextTick(() => child_process._current.emit('close',0));
         });
-        child_process._current.stdout.push(digResponse);
-        process.nextTick(() => child_process._current.emit('close',0));
+
     });
-
 });
-
-
-

@@ -16,7 +16,7 @@ export default function nsupdate(commands){
             if(code === 0){
                 resolve(output);
             }else{
-                reject(`dig exit with ${code}`);
+                reject(`nsupdate exit with ${code}`);
             }
 
         });

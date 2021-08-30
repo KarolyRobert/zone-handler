@@ -37,9 +37,9 @@ export default function dns_zone(request){ // {zone,server,}
         let index;
         switch(type){
             case 'add':
-                let new_record = ddns_record(record,request.zone);
+                let new_record = dns_record(record,request.zone);
                 if(hashtable[new_record.hash] === undefined){
-                    return nsupdateCommands(new_record.add());
+                    return nsupdateCommands(new_record.add_command());
                 }else{
                     throw new Error(`Such record already is in the ${request.zone} zone!`);
                 }
@@ -47,9 +47,9 @@ export default function dns_zone(request){ // {zone,server,}
                 index = hashtable[hash];
                 if(index > -1){
                     let old_record = list[index];
-                    let new_record = ddns_record(record,request.zone);
+                    let new_record = dns_record(record,request.zone);
                     if(!hashtable[new_record.hash]){
-                        return nsupdateCommands(old_record.update(new_record));
+                        return nsupdateCommands(old_record.update_command(new_record));
                     }else{
                         throw new Error(`Such record already is in the ${request.zone} zone!`);
                     }
@@ -60,7 +60,7 @@ export default function dns_zone(request){ // {zone,server,}
                 index = hashtable[hash];
                 if(index > -1){
                     let deleted_record = list[index];
-                    return nsupdateCommands(deleted_record.delete());
+                    return nsupdateCommands(deleted_record.delete_command());
                 }else{
                     throw new Error(`Not such record in ${request.zone} zone!`);
                 } 

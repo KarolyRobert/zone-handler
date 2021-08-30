@@ -38,6 +38,7 @@ const digResponse = '; <<>> DiG 9.11.5-P4-5.1+deb10u5-Raspbian <<>> @ns0.hobbyfo
 describe('util',() => {
     describe('transferZone',() => {
         test('transferZone', done => {
+            expect.assertions(4);
             let add = jest.fn();
             transferZone({
                 zone:'hobbyfork.com',
@@ -54,6 +55,15 @@ describe('util',() => {
                 }
             },add).then(() => {
                 expect(add.mock.calls.length).toBe(13);
+                expect(child_process.spawn.mock.calls.length).toBe(1);
+                expect(child_process.spawn.mock.calls[0][0]).toBe('dig');
+                expect(child_process.spawn.mock.calls[0][1]).toEqual([
+                    "@ns0.hobbyfork.com",
+                    "hobbyfork.com",
+                    "axfr",
+                    "-y",
+                    "hmac-sha256:tsig:a765hs6h7sdh75g765"
+                ]);
                 done();
             });
             child_process._current.stdout.push(digResponse);

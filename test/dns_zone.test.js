@@ -36,7 +36,7 @@ const digResponse = '; <<>> DiG 9.11.5-P4-5.1+deb10u5-Raspbian <<>> @ns0.hobbyfo
 describe('dns_zone', () => {
 
     test('dns_zone promise an object with getRecords, and command properties.',done => {
-        expect.assertions(2);
+        expect.assertions(5);
         dns_zone({
             zone:'hobbyfork.com',
             server:'ns0.hobbyfork.com',
@@ -50,9 +50,9 @@ describe('dns_zone', () => {
                 algorithm:'hmac-sha256',
                 secret:'a765hs6h7sdh75g765'
             }
-        }).then(result => {
-            let hases = result.getRecords().map(record => record.hash);
-            expect(result.getRecords().length).toBe(12);
+        }).then(zone => {
+            let hases = zone.getRecords().map(record => record.hash);
+            expect(zone.getRecords().length).toBe(12);
             expect(hases).toEqual([
                 "9aa25f49e7c4e9d05f30862818f57717",
                 "6f3a8a9d844888acc7cd3bb3e88c5767",
@@ -67,6 +67,22 @@ describe('dns_zone', () => {
                 "a453d4c826191769b371e3f18efb172f",
                 "2a35bcda975bb00eaf1a26278314d905",
             ]);
+            expect(zone.command('add',null,'home.hobbyfork.com. 21600 IN A 192.168.1.6')).toBe(
+                'zone hobbyfork.com\n'+
+                'key hmac-sha256:update.key asdfksf8s6s875g765\n'+
+                'update add home.hobbyfork.com. 21600 A 192.168.1.6\n'+
+                'send\n');
+            expect(zone.command('update','2a35bcda975bb00eaf1a26278314d905','home.hobbyfork.com. 21600 IN A 192.168.1.6')).toBe(
+                'zone hobbyfork.com\n'+
+                'key hmac-sha256:update.key asdfksf8s6s875g765\n'+
+                'update delete www.hobbyfork.com. 30 A 37.234.91.82\n'+
+                'update add home.hobbyfork.com. 21600 A 192.168.1.6\n'+
+                'send\n');
+            expect(zone.command('delete','2a35bcda975bb00eaf1a26278314d905')).toBe(
+                'zone hobbyfork.com\n'+
+                'key hmac-sha256:update.key asdfksf8s6s875g765\n'+
+                'update delete www.hobbyfork.com. 30 A 37.234.91.82\n'+
+                'send\n');
             done();
         },err => {
             expect(err).toBe('error');

@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`nsupdate nsupdate resolve on close code 0 with proper result 1`] = `
+"zone hobbyfork.com
+key hmac-sha256:update.key asdfksf8s6s875g765
+update delete www.hobbyfork.com. 30 A 37.234.91.82
+update add home.hobbyfork.com. 21600 A 192.168.1.6
+send
+"
+`;

@@ -1,3 +1,4 @@
+import nsupdate from './util/nsupdate';
 import { transferZone } from './util/utils';
 import dns_record from './dns_record';
 
@@ -14,14 +15,13 @@ export default function dns_zone(request){ // {zone,server,}
     }
 
     const nsupdateCommands = command => {
-        let result = `zone ${request.zone}\nkey ${request.updateKey.algorithm}:${request.updateKey.name} ${request.updateKey.secret}\n`;
-        if(typeof command === 'string' || command instanceof String){
-            result += `${command}\nsend\n`;
+        if(request.updateKey){
+        return `zone ${request.zone}\n` +
+            `key ${request.updateKey.algorithm}:${request.updateKey.name} ${request.updateKey.secret}\n` +
+            `${command}send\n`;
         }else{
-            let commands = command.join('\n');
-            result += `${commands}\nsend\n`;
+            throw new Error('Missing updateKey!');
         }
-        return result;
     };
 
     const getRecords = () => {
@@ -67,11 +67,40 @@ export default function dns_zone(request){ // {zone,server,}
         }
     };
 
+
+
+    const add_record = record => {
+        try{
+            let nsupdateCommand = command('add',null,record);
+            return nsupdate(nsupdateCommand);
+        }catch(err){
+            Promise.reject(err);
+        }
+    }
+    const update_record = (hash,record) => {
+        try{
+            let nsupdateCommand = command('update',hash,record);
+            return nsupdate(nsupdateCommand);
+        }catch(err){
+            Promise.reject(err);
+        }
+    }
+    const delete_record = hash => {
+        try{
+            let nsupdateCommand = command('delete',hash);
+            return nsupdate(nsupdateCommand);
+        }catch(err){
+            Promise.reject(err);
+        }
+    }
+
     return new Promise((resolve,reject) => {
         transferZone(request,transferRecord).then(() => {
             resolve({
-                command,
-                getRecords
+                getRecords,
+                add : add_record,
+                update : update_record,
+                delete : delete_record
             });
         },err => reject(err));
     });

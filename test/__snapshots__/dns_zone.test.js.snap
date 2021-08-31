@@ -1,0 +1,139 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`dns_zone dns_zone default use case. 1`] = `
+Array [
+  Object {
+    "hash": "9aa25f49e7c4e9d05f30862818f57717",
+    "record": Object {
+      "data": "ns0.hobbyfork.com. hostmaster.hobbyfork.com. 2021081502 43200 7200 2419200 600",
+      "name": "hobbyfork.com.",
+      "ttl": 21600,
+      "type": "SOA",
+    },
+  },
+  Object {
+    "hash": "6f3a8a9d844888acc7cd3bb3e88c5767",
+    "record": Object {
+      "data": "ns0.hobbyfork.com.",
+      "name": "hobbyfork.com.",
+      "ttl": 604800,
+      "type": "NS",
+    },
+  },
+  Object {
+    "hash": "8b946252701c4b2d3fc3d1b9cc1a7d8b",
+    "record": Object {
+      "data": "ns1.hobbyfork.com.",
+      "name": "hobbyfork.com.",
+      "ttl": 604800,
+      "type": "NS",
+    },
+  },
+  Object {
+    "hash": "9761043884602298e407bc24fc0b4eae",
+    "record": Object {
+      "data": "92.111.27.14",
+      "name": "hobbyfork.com.",
+      "ttl": 604800,
+      "type": "A",
+    },
+  },
+  Object {
+    "hash": "75e21d6ec44bf09aba586b0faafa7601",
+    "record": Object {
+      "data": "10 mail.hobbyfork.com.",
+      "name": "hobbyfork.com.",
+      "ttl": 604800,
+      "type": "MX",
+    },
+  },
+  Object {
+    "hash": "fcad8a0f3a6a84f80b1653de77ea2e0b",
+    "record": Object {
+      "data": "v=spf1 mx ~all",
+      "name": "hobbyfork.com.",
+      "ttl": 86400,
+      "type": "TXT",
+    },
+  },
+  Object {
+    "hash": "7bff7fabba00a16fa3cb500592c11095",
+    "record": Object {
+      "data": "v=DMARC1; p=reject; pct=100; fo=1; rua=mailto:postmaster@hobbyfork.com",
+      "name": "_dmarc.hobbyfork.com.",
+      "ttl": 86400,
+      "type": "TXT",
+    },
+  },
+  Object {
+    "hash": "b81fe34e0b805d0b13f449173b03b746",
+    "record": Object {
+      "data": "v=DKIM1; h=sha256; k=rsa; p=MIIBIjggdANBgdkLqmTMaE89iRTpZd8pyHvsBWC9UTKPMyGYg//ZeW7KEHhQuQkSvKO3HsFN2pzeQI+UGszHviykKXz3SxReHSscolEEmxnckc8mtK78DO3KFbg6lpaqUNjhhOnVEvsYpwC6FIw09ZpfWghemQ9JDPI+xVpapuVvzvUbwIDAQAB",
+      "name": "default._domainkey.hobbyfork.com.",
+      "ttl": 86400,
+      "type": "TXT",
+    },
+  },
+  Object {
+    "hash": "81a4c948c1b2e6dbfe0d0e72012a15ca",
+    "record": Object {
+      "data": "92.118.27.14",
+      "name": "mail.hobbyfork.com.",
+      "ttl": 604800,
+      "type": "A",
+    },
+  },
+  Object {
+    "hash": "1357d488cbc526fe2f351b94b4c8b382",
+    "record": Object {
+      "data": "45.148.28.74",
+      "name": "ns0.hobbyfork.com.",
+      "ttl": 604800,
+      "type": "A",
+    },
+  },
+  Object {
+    "hash": "a453d4c826191769b371e3f18efb172f",
+    "record": Object {
+      "data": "92.118.27.14",
+      "name": "ns1.hobbyfork.com.",
+      "ttl": 604800,
+      "type": "A",
+    },
+  },
+  Object {
+    "hash": "2a35bcda975bb00eaf1a26278314d905",
+    "record": Object {
+      "data": "37.234.91.82",
+      "name": "www.hobbyfork.com.",
+      "ttl": 30,
+      "type": "A",
+    },
+  },
+]
+`;
+
+exports[`dns_zone dns_zone default use case. 2`] = `
+"zone hobbyfork.com
+key hmac-sha256:update.key asdfksf8s6s875g765
+update add home.hobbyfork.com. 21600 A 192.168.1.6
+send
+"
+`;
+
+exports[`dns_zone dns_zone default use case. 3`] = `
+"zone hobbyfork.com
+key hmac-sha256:update.key asdfksf8s6s875g765
+update delete www.hobbyfork.com. 30 A 37.234.91.82
+update add www.hobbyfork.com. 21600 A 34.123.39.11
+send
+"
+`;
+
+exports[`dns_zone dns_zone default use case. 4`] = `
+"zone hobbyfork.com
+key hmac-sha256:update.key asdfksf8s6s875g765
+update delete www.hobbyfork.com. 30 A 37.234.91.82
+send
+"
+`;

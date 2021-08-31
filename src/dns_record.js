@@ -58,20 +58,20 @@ export default function dns_record(raw,zone){
 	const hash = crypto.createHash('md5').update(`${name()}${record.ttl}${record.type}${record.data}${zone}`).digest('hex');
 
 	const add_command = () => {
-		return `update add ${name()} ${record.ttl} ${record.type} ${data()}`;
+		return `update add ${name()} ${record.ttl} ${record.type} ${data()}\n`;
 	};
 
 	const delete_command = () => {
-		return `update delete ${name()} ${record.ttl} ${record.type} ${data()}`;
+		return `update delete ${name()} ${record.ttl} ${record.type} ${data()}\n`;
 	};
 
     const update_command = (update_record) => {
 		if(record.type === 'SOA'){
 			//return ddns_record(raw,zone).add();
-			return [update_record.add_command()];
+			return update_record.add_command();
 		}
 		//return [delete_command(),ddns_record(raw,zone).add()];
-		return [delete_command(),update_record.add_command()];
+		return [delete_command(),update_record.add_command()].join('');
 	};
 
 

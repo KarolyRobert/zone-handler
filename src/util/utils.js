@@ -21,4 +21,15 @@ const transferZone = (request,addRecordToZone) => {
     });
 }
 
-export { transferZone }
+const getAuthoritative = (zone) => {
+    return new Promise((resolve,reject) => {
+        dig([zone]).then(result => {
+
+            let SOA =/^((?:[a-z|0-9|_]{1,}-?[a-z|0-9|_]{1,}\.){1,}[a-z|0-9|_]{1,})\.\s{1,}\d{1,}\s{1,}IN\s{1,}(?:SOA)\s{1,}((?:[a-z|0-9|_]{1,}-?[a-z|0-9|_]{1,}\.){1,}[a-z|0-9|_]{1,})\..{1,}/gm.exec(result);
+         
+            resolve({zone:SOA[1],server:SOA[2]});
+        },err => reject(err));
+    });
+}
+
+export { transferZone, getAuthoritative }

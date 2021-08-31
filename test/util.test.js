@@ -1,11 +1,11 @@
 import child_process from 'child_process';
-import { transferZone } from '../src/util/utils';
+import { transferZone, getAuthoritative } from '../src/util/utils';
 
 
 jest.mock('child_process');
 
 
-const digResponse = '; <<>> DiG 9.11.5-P4-5.1+deb10u5-Raspbian <<>> @ns0.hobbyfork.com hobbyfork.com axfr -k tsig.key\n'+
+const digaxfr = '; <<>> DiG 9.11.5-P4-5.1+deb10u5-Raspbian <<>> @ns0.hobbyfork.com hobbyfork.com axfr -k tsig.key\n'+
 '; (1 server found)\n'+
 ';; global options: +cmd\n'+
 'hobbyfork.com.		21600	IN	SOA	ns0.hobbyfork.com. hostmaster.hobbyfork.com. 2021081502 43200 7200 2419200 600\n'+
@@ -34,10 +34,33 @@ const digResponse = '; <<>> DiG 9.11.5-P4-5.1+deb10u5-Raspbian <<>> @ns0.hobbyfo
 ';; WHEN: h aug 16 20:36:07 CEST 2021\n'+
 ';; XFR size: 66 records (messages 1, bytes 5844)\n';
 
+const digSOA = '; <<>> DiG 9.11.5-P4-5.1+deb10u5-Raspbian <<>> teva.fasz.hobbyfork.com\n'+
+';; global options: +cmd\n'+
+';; Got answer:\n'+
+';; ->>HEADER<<- opcode: QUERY, status: NXDOMAIN, id: 59648\n'+
+';; flags: qr rd ra; QUERY: 1, ANSWER: 0, AUTHORITY: 1, ADDITIONAL: 1\n'+
+'\n'+
+';; OPT PSEUDOSECTION:\n'+
+'; EDNS: version: 0, flags:; udp: 512\n'+
+';; QUESTION SECTION:\n'+
+';teva.fasz.hobbyfork.com.	IN	A\n'+
+'\n'+
+';; AUTHORITY SECTION:\n'+
+'hobbyfork.com.		600	IN	SOA	ns0.hobbyfork.com. hostmaster.hobbyfork.com. 2021081533 43200 7200 2419200 600\n'+
+'\n'+
+';; Query time: 104 msec\n'+
+';; SERVER: 8.8.4.4#53(8.8.4.4)\n'+
+';; WHEN: k aug 31 05:03:51 CEST 2021\n'+
+';; MSG SIZE  rcvd: 103\n'
+
+
 
 describe('util',() => {
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
     describe('transferZone',() => {
-        test('transferZone', done => {
+        test('transferZone call dig axfr and transfer editable records by addRecordToZone callback.', done => {
             expect.assertions(4);
             let add = jest.fn();
             transferZone({
@@ -66,9 +89,24 @@ describe('util',() => {
                 ]);
                 done();
             });
-            child_process._current.stdout.push(digResponse);
+            child_process._current.stdout.push(digaxfr);
             process.nextTick(() => child_process._current.emit('close',0));
         });
 
+    });
+    describe('getAuthoritation',() => {
+        expect.assertions(4);
+        test('getAuthoritative return the authoritative name server belonging to the given zone by domain name.',done => {
+            getAuthoritative('domain.above.hobbyfork.com').then(result => {
+                expect(result).toStrictEqual({zone:'hobbyfork.com',server:'ns0.hobbyfork.com'});
+                expect(child_process.spawn.mock.calls.length).toBe(1);
+                expect(child_process.spawn.mock.calls[0][0]).toBe('dig');
+                expect(child_process.spawn.mock.calls[0][1]).toEqual(['domain.above.hobbyfork.com']);
+                done();
+            });
+            child_process._current.stdout.push(digSOA);
+            process.nextTick(() => child_process._current.emit('close',0));
+        });
+      
     });
 });

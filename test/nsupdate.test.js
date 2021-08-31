@@ -49,7 +49,7 @@ describe('nsupdate',() => {
         child_process._current.emit('close',-1);
     });
 
-    test('dig resolve on close code 0 with proper result',done => {
+    test('nsupdate resolve on close code 0 with proper result',done => {
         expect.assertions(2);
         let result;
         nsupdate(updateCommand).then(res => {
@@ -59,7 +59,7 @@ describe('nsupdate',() => {
         process.nextTick(() => child_process._current.emit('close',0));
         setTimeout(() => {
             expect(result).toBe('');
-            expect(child_process._current.stdin.buffer).toBe(updateCommand);
+            expect(child_process._current.stdin.buffer).toMatchSnapshot();
             done();
         },100);
     });

@@ -63,7 +63,7 @@ Add record by string of "dig" like response. (It is work with the update methode
 hash is identify the zone's teenth record. You can use it for update and delete record.
 ```javascript
 
-    let hash = records[10].hash;
+    let hash = zone.getRecords()[10].hash;
     // Lets update then.
     zone.update(hash,'www 3600 IN A 192.168.0.10').then(() => {
         console.log('The teenth record updated!');

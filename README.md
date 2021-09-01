@@ -1,7 +1,7 @@
 # zone-handler
 
 zone-handler is a node.js Dynamic DNS update utility. It's working by executing bind-utils package's dig and nsupdate commands. It's required parameter an object with the zone, updateKey, transferKey fields, the keys must be contain name, algorithm, secret fields. In default case it will return a promise which give a handler object which have getRecords,add,update,delete methods for handle the zone by detailed below.
-Additionaly if the zone-handler invoke only with a zone field, in that case it will return the the authoritative name server belonging to the given zone.
+Additionaly if the zone-handler invoke only with a zone field, in that case it will return the authoritative name server belonging to the given zone.
 
 
 Use cases:

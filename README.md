@@ -24,8 +24,9 @@ const zoneData = {
 }
 
 zoneHandler(zoneData).then(zone => {
-    let records = zone.getRecords(); /* records is an array of object conatning a hash and a record field.
-    That hash can you use to identify records in case of update and delete. The record field of the objects contain an object wiht name,ttl,type,data fields. */
+    let records = zone.getRecords(); /* records is an array of object conatning a hash and
+    a record field. That hash can you use to identify records in case of update and delete. 
+    The record field of the objects contain an object wiht name,ttl,type,data fields. */
 
     // Add record by object. (The name field without point at the end will be supplement with zone name!!!)
     zone.add({name:'www.example.com.',ttl:3600,type:'A',data:'192.168.0.10'}).then(() => {

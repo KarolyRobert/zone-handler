@@ -1,7 +1,6 @@
 import zone_handler from '../src/zone_handler';
 import { getAuthoritative } from '../src/util/utils';
 import dns_zone from '../src/dns_zone';
-import nsupdate from '../src/util/nsupdate';
 
 
 jest.mock('../src/util/utils',() => {
@@ -13,22 +12,6 @@ jest.mock('../src/util/utils',() => {
 });
 
 jest.mock('../src/dns_zone',() => {
-
-    const getRecordsMock = jest.fn();
-    const commandMock = jest.fn();
-
-    return {
-        __esModule: true,
-        default:jest.fn(() => {
-            return new Promise(resolve => resolve({
-                getRecords:getRecordsMock,
-                command:commandMock
-            }));
-        })
-    }
-});
-
-jest.mock('../src/util/nsupdate',() => {
     return {
         __esModule: true,
         default:jest.fn(() => {
@@ -36,7 +19,6 @@ jest.mock('../src/util/nsupdate',() => {
         })
     }
 });
-
 
 
 describe('zone_handler', () => {
@@ -56,8 +38,8 @@ describe('zone_handler', () => {
             });
         });
 
-        test('zone_handler with request containing transferKey supplement request with the authoritative name server then resolve an object with getRecords/add/update/delete field.', () => {
-            zone_handler({zone:'valami.barmi.hobbyfork.com',transferKey:{name:'tsig',algorithm:'hmac-256',secret:'qwertzuiop'}}).then(zone => {
+        test('zone_handler with request containing transferKey supplement request and call dns_zone with supplemented request.', () => {
+            zone_handler({zone:'valami.barmi.hobbyfork.com',transferKey:{name:'tsig',algorithm:'hmac-256',secret:'qwertzuiop'}}).then(() => {
                 expect.assertions(2);
                 expect(dns_zone.mock.calls.length).toBe(1);
                 expect(dns_zone.mock.calls[0][0]).toStrictEqual({zone:'hobbyfork.com',server:'ns0.hobbyfork.com',transferKey:{name:'tsig',algorithm:'hmac-256',secret:'qwertzuiop'},updateKey:false});

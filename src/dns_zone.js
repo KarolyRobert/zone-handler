@@ -2,7 +2,7 @@ import nsupdate from './util/nsupdate';
 import { transferZone } from './util/utils';
 import dns_record from './dns_record';
 
-export default function dns_zone(request){ // {zone,server,}
+export default function dns_zone(request){
     let list = [];
     let hashtable = {};
 

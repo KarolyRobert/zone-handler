@@ -7,6 +7,8 @@ exports.default = dns_record;
 
 var _crypto = _interopRequireDefault(require("crypto"));
 
+var _translatableError = require("../lib/translatableError");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const rawToObject = raw => {
@@ -56,7 +58,7 @@ function dns_record(raw, zone) {
         return record.name;
       }
 
-      throw new Error(`The name "${record.name}" is invalid or outside of zone!`);
+      throw new _translatableError.TranslatableError(`The name "${record.name}" is invalid or outside of zone!`, [record.name]);
     } // record.name is valid domain
 
 
@@ -64,7 +66,7 @@ function dns_record(raw, zone) {
       return `${record.name}.${zone}.`;
     }
 
-    throw new Error(`The name "${record.name}" is invalid!`);
+    throw new _translatableError.TranslatableError(`The name "${record.name}" is invalid!`, [record.name]);
   };
 
   const hash = _crypto.default.createHash('md5').update(`${name()}${record.ttl}${record.type}${record.data}${zone}`).digest('hex');

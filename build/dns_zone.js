@@ -11,6 +11,8 @@ var _utils = require("./util/utils");
 
 var _dns_record = _interopRequireDefault(require("./dns_record"));
 
+var _translatableError = require("../lib/translatableError");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function dns_zone(request) {
@@ -30,7 +32,7 @@ function dns_zone(request) {
     if (request.updateKey) {
       return `zone ${request.zone}\n` + `key ${request.updateKey.algorithm}:${request.updateKey.name} ${request.updateKey.secret}\n` + `${command}send\n`;
     } else {
-      throw new Error('Missing updateKey!');
+      throw new _translatableError.TranslatableError('Missing updateKey!');
     }
   };
 
@@ -53,7 +55,7 @@ function dns_zone(request) {
         if (hashtable[new_record.hash] === undefined) {
           return nsupdateCommands(new_record.add_command());
         } else {
-          throw new Error(`Such record already is in the ${request.zone} zone!`);
+          throw new _translatableError.TranslatableError(`Such record already is in the ${request.zone} zone!`, [request.zone]);
         }
 
       case 'update':
@@ -66,10 +68,10 @@ function dns_zone(request) {
           if (!hashtable[new_record.hash]) {
             return nsupdateCommands(old_record.update_command(new_record));
           } else {
-            throw new Error(`Such record already is in the ${request.zone} zone!`);
+            throw new _translatableError.TranslatableError(`Such record already is in the ${request.zone} zone!`, [request.zone]);
           }
         } else {
-          throw new Error(`Not such record in ${request.zone} zone!`);
+          throw new _translatableError.TranslatableError(`Not such record in ${request.zone} zone!`, [request.zone]);
         }
 
       case 'delete':
@@ -79,7 +81,7 @@ function dns_zone(request) {
           let deleted_record = list[index];
           return nsupdateCommands(deleted_record.delete_command());
         } else {
-          throw new Error(`Not such record in ${request.zone} zone!`);
+          throw new _translatableError.TranslatableError(`Not such record in ${request.zone} zone!`, [request.zone]);
         }
 
     }
@@ -90,7 +92,7 @@ function dns_zone(request) {
       let nsupdateCommand = command('add', null, record);
       return (0, _nsupdate.default)(nsupdateCommand);
     } catch (err) {
-      Promise.reject(err);
+      return Promise.reject(err);
     }
   };
 
@@ -99,7 +101,7 @@ function dns_zone(request) {
       let nsupdateCommand = command('update', hash, record);
       return (0, _nsupdate.default)(nsupdateCommand);
     } catch (err) {
-      Promise.reject(err);
+      return Promise.reject(err);
     }
   };
 
@@ -108,7 +110,7 @@ function dns_zone(request) {
       let nsupdateCommand = command('delete', hash);
       return (0, _nsupdate.default)(nsupdateCommand);
     } catch (err) {
-      Promise.reject(err);
+      return Promise.reject(err);
     }
   };
 

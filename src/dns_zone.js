@@ -1,6 +1,8 @@
 import nsupdate from './util/nsupdate';
 import { transferZone } from './util/utils';
 import dns_record from './dns_record';
+import { TranslatableError } from '../lib/translatableError';
+
 
 export default function dns_zone(request){
     let list = [];
@@ -20,7 +22,7 @@ export default function dns_zone(request){
             `key ${request.updateKey.algorithm}:${request.updateKey.name} ${request.updateKey.secret}\n` +
             `${command}send\n`;
         }else{
-            throw new Error('Missing updateKey!');
+            throw new TranslatableError('Missing updateKey!');
         }
     };
 
@@ -41,7 +43,7 @@ export default function dns_zone(request){
                 if(hashtable[new_record.hash] === undefined){
                     return nsupdateCommands(new_record.add_command());
                 }else{
-                    throw new Error(`Such record already is in the ${request.zone} zone!`);
+                    throw new TranslatableError(`Such record already is in the ${request.zone} zone!`,[request.zone]);
                 }
             case 'update':
                 index = hashtable[hash];
@@ -51,10 +53,10 @@ export default function dns_zone(request){
                     if(!hashtable[new_record.hash]){
                         return nsupdateCommands(old_record.update_command(new_record));
                     }else{
-                        throw new Error(`Such record already is in the ${request.zone} zone!`);
+                        throw new TranslatableError(`Such record already is in the ${request.zone} zone!`,[request.zone]);
                     }
                 }else{
-                    throw new Error(`Not such record in ${request.zone} zone!`);
+                    throw new TranslatableError(`Not such record in ${request.zone} zone!`,[request.zone]);
                 }
             case 'delete':
                 index = hashtable[hash];
@@ -62,7 +64,7 @@ export default function dns_zone(request){
                     let deleted_record = list[index];
                     return nsupdateCommands(deleted_record.delete_command());
                 }else{
-                    throw new Error(`Not such record in ${request.zone} zone!`);
+                    throw new TranslatableError(`Not such record in ${request.zone} zone!`,[request.zone]);
                 } 
         }
     };
@@ -74,7 +76,7 @@ export default function dns_zone(request){
             let nsupdateCommand = command('add',null,record);
             return nsupdate(nsupdateCommand);
         }catch(err){
-            Promise.reject(err);
+            return Promise.reject(err);
         }
     }
     const update_record = (hash,record) => {
@@ -82,7 +84,7 @@ export default function dns_zone(request){
             let nsupdateCommand = command('update',hash,record);
             return nsupdate(nsupdateCommand);
         }catch(err){
-            Promise.reject(err);
+            return Promise.reject(err);
         }
     }
     const delete_record = hash => {
@@ -90,7 +92,7 @@ export default function dns_zone(request){
             let nsupdateCommand = command('delete',hash);
             return nsupdate(nsupdateCommand);
         }catch(err){
-            Promise.reject(err);
+            return Promise.reject(err);
         }
     }
 

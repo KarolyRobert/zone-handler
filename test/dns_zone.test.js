@@ -1,6 +1,7 @@
 import child_process from 'child_process';
 import dns_zone from '../src/dns_zone';
 import nsupdate from '../src/util/nsupdate';
+import { TranslatableError } from '../lib/translatableError';
 
 jest.mock('child_process');
 
@@ -57,6 +58,17 @@ const request = {
     }
 }
 
+const errorRequest = {
+    zone:'hobbyfork.com',
+    server:'ns0.hobbyfork.com',
+    updateKey:false,
+    transferKey:{
+        name:'tsig',
+        algorithm:'hmac-sha256',
+        secret:'a765hs6h7sdh75g765'
+    }
+}
+
 describe('dns_zone', () => {
 
     test('dns_zone default use case.',done => {
@@ -82,6 +94,53 @@ describe('dns_zone', () => {
         child_process._current.stdout.push(digResponse);
         process.nextTick(() => child_process._current.emit('close',0));
     });
+
+    test('dns_zone missing updateKey',done => {
+        expect.assertions(1);
+        dns_zone( {zone:'hobbyfork.com',
+        server:'ns0.hobbyfork.com',
+        updateKey:false,
+        transferKey:{
+            name:'tsig',
+            algorithm:'hmac-sha256',
+            secret:'a765hs6h7sdh75g765'
+        }}).then(zone => {
+            zone.add('home.hobbyfork.com. 21600 IN A 192.168.1.6').catch(err => {
+                expect(err).toBeInstanceOf(TranslatableError);
+                done();
+            });
+        },err => {
+            expect(err).toBe('error');
+            done();
+        });
+        child_process._current.stdout.push(digResponse);
+        process.nextTick(() => child_process._current.emit('close',0));
+    });
+
+    test('dns_zone add/update/delete errors',done => {
+        expect.assertions(4);
+        dns_zone(request).then(zone => {
+            zone.add('hobbyfork.com.		604800	IN	NS	ns1.hobbyfork.com.').catch(err => {
+                expect(err).toBeInstanceOf(TranslatableError);
+                zone.update('2a35bcda975bb00eaf1a26278314d905','hobbyfork.com.		604800	IN	NS	ns1.hobbyfork.com.').catch(err2 => {
+                    expect(err2).toBeInstanceOf(TranslatableError);
+                    zone.update('2a35bcda975bb00eaf1a26278314d90','home.hobbyfork.com. 21600 IN A 192.168.1.6').catch(err3 => {
+                        expect(err3).toBeInstanceOf(TranslatableError);
+                        zone.delete('2a35bcda975bb00eaf1a26278314d90').catch(err3 => {
+                            expect(err3).toBeInstanceOf(TranslatableError);
+                            done()
+                        });
+                    });
+                });
+            });
+        },err => {
+            expect(err).toBe('error');
+            done();
+        });
+        child_process._current.stdout.push(digResponse);
+        process.nextTick(() => child_process._current.emit('close',0));
+    });
+
 
 });
 

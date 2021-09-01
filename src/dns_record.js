@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import { TranslatableError } from '../lib/translatableError';
 
 const rawToObject = (raw) => {
 	let parts = raw.split(/\s{1,}/);
@@ -46,13 +47,13 @@ export default function dns_record(raw,zone){
 			if(record.name.endsWith(`${zone}.`) && /^(?:[a-z|0-9|_]{1,}-?[a-z|0-9|_]{1,}\.?){1,}\.$/.test(record.name)){
 				return record.name;
 			}
-			throw new Error(`The name "${record.name}" is invalid or outside of zone!`);
+			throw new TranslatableError(`The name "${record.name}" is invalid or outside of zone!`,[record.name]);
 		}
 		// record.name is valid domain
 		if(/^(?:[a-z|0-9|_]{1,}-?[a-z|0-9|_]{1,}\.?){1,}[a-z|0-9|_]$/.test(record.name)){
 			return `${record.name}.${zone}.`;
 		}
-		throw new Error(`The name "${record.name}" is invalid!`);
+		throw new TranslatableError(`The name "${record.name}" is invalid!`,[record.name]);
 	}
 
 	const hash = crypto.createHash('md5').update(`${name()}${record.ttl}${record.type}${record.data}${zone}`).digest('hex');

@@ -101,7 +101,7 @@ describe('util',() => {
                 expect(result).toStrictEqual({zone:'hobbyfork.com',server:'ns0.hobbyfork.com'});
                 expect(child_process.spawn.mock.calls.length).toBe(1);
                 expect(child_process.spawn.mock.calls[0][0]).toBe('dig');
-                expect(child_process.spawn.mock.calls[0][1]).toEqual(['domain.above.hobbyfork.com']);
+                expect(child_process.spawn.mock.calls[0][1]).toEqual(['SOA','domain.above.hobbyfork.com']);
                 done();
             });
             child_process._current.stdout.push(digSOA);

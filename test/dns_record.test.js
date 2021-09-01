@@ -1,4 +1,5 @@
 import dns_record  from '../src/dns_record';
+import { TranslatableError } from '../lib/translatableError';
 
 
 
@@ -37,25 +38,25 @@ describe("dns_record",() => {
 
     test("Creation of dns_record with invalid name field must throw error.",() => {
         raw = { name:'-www',ttl:6300,type:'A',data:'127.0.0.1' }
-        expect(() => dns_record(raw,'example.com')).toThrow('The name "-www" is invalid!');
+        expect(() => dns_record(raw,'example.com')).toThrow(TranslatableError);//'The name "-www" is invalid!');
 
         raw = { name:'www-',ttl:6300,type:'A',data:'127.0.0.1' }
-        expect(() => dns_record(raw,'example.com')).toThrow('The name "www-" is invalid!');
+        expect(() => dns_record(raw,'example.com')).toThrow(TranslatableError);//'The name "www-" is invalid!');
 
         raw = { name:'www-.example.com.',ttl:6300,type:'A',data:'127.0.0.1' }
-        expect(() => dns_record(raw,'example.com')).toThrow('The name "www-.example.com." is invalid or outside of zone!');
+        expect(() => dns_record(raw,'example.com')).toThrow(TranslatableError);//'The name "www-.example.com." is invalid or outside of zone!');
 
         raw = { name:'-www.example.com.',ttl:6300,type:'A',data:'127.0.0.1' }
-        expect(() => dns_record(raw,'example.com')).toThrow('The name "-www.example.com." is invalid or outside of zone!');
+        expect(() => dns_record(raw,'example.com')).toThrow(TranslatableError);//'The name "-www.example.com." is invalid or outside of zone!');
 
         raw = { name:'www.exampl.com.',ttl:6300,type:'A',data:'127.0.0.1' }
-        expect(() => dns_record(raw,'example.com')).toThrow('The name "www.exampl.com." is invalid or outside of zone!');
+        expect(() => dns_record(raw,'example.com')).toThrow(TranslatableError);//'The name "www.exampl.com." is invalid or outside of zone!');
 
         raw = { name:'www.exőampl',ttl:6300,type:'A',data:'127.0.0.1' }
-        expect(() => dns_record(raw,'example.com')).toThrow('The name "www.exőampl" is invalid!');
+        expect(() => dns_record(raw,'example.com')).toThrow(TranslatableError);//'The name "www.exőampl" is invalid!');
 
         raw = { name:'w w.example.com.',ttl:6300,type:'A',data:'127.0.0.1' }
-        expect(() => dns_record(raw,'example.com')).toThrow('The name "w w.example.com." is invalid or outside of zone!');
+        expect(() => dns_record(raw,'example.com')).toThrow(TranslatableError);//'The name "w w.example.com." is invalid or outside of zone!');
     });
 
     describe("dns_record.add need to return a proper command to add record with nsupdate.",() => {

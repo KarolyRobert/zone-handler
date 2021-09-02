@@ -18,24 +18,6 @@ class WriteMemory extends Writable {
       this.buffer = "";
     }
   }
-/*
-let mockData = [];
-let mockError = '';
-let mockErrorType = '';
-child_process._setData = (data) => {
-    mockData = data;
-}
-
-child_process._setError = (err) => {
-    mockError = err;
-}
-child_process._setErrorType = (err) => {
-  mockErrorType = err;
-}
-
-child_process._inData = '';
-
-*/
 
 child_process._current;
 
@@ -48,31 +30,7 @@ child_process.spawn = jest.fn(() => {
 
 
     cprocess.stdout._read = cprocess.stderr._read = (size) => {};
-    /*
-    
-    process.nextTick(() => {
-        if(mockError === command){
-            if(mockErrorType === ''){
-              cprocess.emit('error',`spawn ${command} ENOENT`);
-            }else{
-              cprocess.stderr.push(`${command} runtime error!`);
-            }
-        }else{
-            if(command === 'dig'){
-                let data = mockData[0];
-                cprocess.stdout.push(data);
-              
-                process.nextTick(() => {
-                  cprocess.emit('close',0);
-                });
-            }
-        }
-    });
    
-    cprocess.stdin.on('close', () => {
-        child_process._inData = cprocess.stdin.buffer;
-        cprocess.emit('close',0);
-    });*/
     child_process._current = cprocess;
     return cprocess;
 });

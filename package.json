@@ -1,6 +1,6 @@
 {
   "name": "@zargu/zone-handler",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Interface for adding / updating / deleting dns records in a dns zone.",
   "main": "build/zone_handler.js",
   "scripts": {

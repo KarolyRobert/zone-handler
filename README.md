@@ -55,7 +55,7 @@ Add record by string of "dig" like response. (It is work with the update methode
     zone.add("www.example.com.	3600	IN	A	192.168.0.10").then(() => {
         console.log('Record add successfully!');
     },err => {
-        console.log('The task faild successfuly! :)',err);
+        console.log('The task fail successfuly! :)',err);
     });
 
 ```
@@ -89,5 +89,5 @@ zoneHandler(zoneData).then(authoritative => {
 
 ```
 
-Thanks for reading!
+### Thanks for reading!
 Sorry for my terrible english.
